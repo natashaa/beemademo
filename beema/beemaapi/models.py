@@ -29,11 +29,12 @@ class Customer(models.Model):
 
 
 class Policy(models.Model):
-    customer = models.ForeignKey(Customer, blank=True, null=True, on_delete=models.CASCADE, related_name='policies')
-    state = models.CharField(max_length=10, choices=QUOTE_STATES,  default='new')
+    name = models.CharField(max_length=200)
     type = models.CharField(max_length=10, choices=POLICY_TYPES)
     premium = models.IntegerField()
     cover = models.IntegerField()
+    state = models.CharField(max_length=10, choices=QUOTE_STATES, default='new')
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='policies')
 
     class Meta:
         verbose_name_plural = "policies"

@@ -6,7 +6,7 @@ from .models import Customer, Policy
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     dob = serializers.DateField(input_formats=settings.DATE_INPUT_FORMATS)
-    policies = serializers.CharField(source='policy', read_only=True)
+    policies = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Customer
@@ -15,7 +15,7 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
 
 class PolicySerializer(serializers.HyperlinkedModelSerializer):
 
-    customer_id = serializers.CharField(source='customer.pk', read_only=True)
+    customer_id = serializers.PrimaryKeyRelatedField(source='customer', queryset=Customer.objects.all())
     customer = CustomerSerializer(read_only=True)
 
     class Meta:
