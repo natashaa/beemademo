@@ -1,3 +1,5 @@
+import datetime
+
 from django.db.models import Q
 
 import django_filters.rest_framework as filters
@@ -45,15 +47,19 @@ class QuoteViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, url_path='accept', methods=['put'])
     def accept(self, request, pk=None, *args, **kwargs):
+        """ PUT method to pay for the quote, updates state to quoted and accepted_at timestamp """
         quote = self.get_object()
         quote.state='quoted'
+        quote.accepted_at = datetime.datetime.now()
         quote.save()
         return Response({'quote_id': pk, 'state': 'accepted'})
 
     @action(detail=True, url_path='pay', methods=['put'])
     def pay(self, request, pk=None, *args, **kwargs):
+        """ PUT method to pay for the quote, updates state to bound and paid_at timestamp """
         quote = self.get_object()
         quote.state = 'bound'
+        quote.paid_at = datetime.datetime.now()
         quote.save()
         return Response({'quote_id': pk, 'state': 'paid'})
 
@@ -62,6 +68,18 @@ class PolicyViewSet(QuoteViewSet):
     queryset = Policy.objects.filter(state='bound')
 
     filter_fields = ['customer_id']
+
+    @action(detail=True, url_path='history', methods=['get'])
+    def history(self, request, pk=None, *args, **kwargs):
+        """ Displays history of policy object based on created, accepted and paid on dates """
+        quote = self.get_object()
+        serializer = self.get_serializer(quote)
+        history_dict = {'history': {'created_on': quote.created_at,
+                                    'accepted_on': quote.accepted_at,
+                                    'paid_on': quote.paid_at
+                        }}
+        response_dict = {**serializer.data, **history_dict}
+        return Response(response_dict)
 
 
 

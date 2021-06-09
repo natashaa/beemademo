@@ -30,17 +30,20 @@ class Customer(models.Model):
 
 class Policy(models.Model):
     name = models.CharField(max_length=200)
-    type = models.CharField(max_length=10, choices=POLICY_TYPES)
+    type = models.CharField(max_length=100)
     premium = models.IntegerField()
     cover = models.IntegerField()
     state = models.CharField(max_length=10, choices=QUOTE_STATES, default='new')
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='policies')
+    created_at = models.DateTimeField(auto_now_add=True)
+    accepted_at = models.DateTimeField(blank=True, null=True)
+    paid_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "policies"
 
     def __str__(self):
-        return '{} {}'.format(self.type, self.state, self.customer)
+        return '{} {} {} {}'.format(self.pk, self.name, self.type, self.state)
 
 
 

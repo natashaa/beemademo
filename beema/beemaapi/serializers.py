@@ -20,4 +20,5 @@ class PolicySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Policy
-        fields = ('id', 'type', 'premium', 'cover', 'customer_id', 'customer', 'state')
+        fields = ('id', 'name', 'type', 'premium', 'cover', 'customer_id', 'customer', 'state', 'created_at',
+                  'accepted_at', 'paid_at')
